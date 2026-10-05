@@ -1,0 +1,17 @@
+@extends('layouts.app')
+
+@section('content')
+
+<h2 class="text-2xl font-bold mb-6">Tambah Penyewaan</h2>
+
+<form action="{{ route('rental_schedules.store') }}" method="POST"
+      class="bg-white p-6 rounded-xl shadow space-y-4">
+    @csrf
+
+    @include('rental_schedules._form')
+
+    <button class="bg-purple-600 text-white px-5 py-3 rounded">Simpan</button>
+    <a href="{{ route('rental_schedules.index') }}" class="px-3 text-gray-600">Batal</a>
+</form>
+
+@endsection
