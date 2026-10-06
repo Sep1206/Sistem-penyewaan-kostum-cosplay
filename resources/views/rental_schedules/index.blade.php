@@ -22,7 +22,7 @@
 <thead class="bg-purple-600 text-white">
 <tr>
     <th class="p-3">Customer</th>
-    <th class="p-3">Kostum</th>
+    <th class="p-3">Item</th>
     <th class="p-3">Tanggal Sewa</th>
     <th class="p-3">Tanggal Kembali</th>
     <th class="p-3">Total</th>
@@ -37,7 +37,11 @@
 
 <tr class="border-b">
     <td class="p-3">{{ $rental->customer->nama }}</td>
-    <td class="p-3">{{ $rental->costume->nama_kostum }}</td>
+    <td class="p-3">
+        @foreach($rental->items as $item)
+            <div>{{ $item->nama }} <span class="text-gray-500">×{{ $item->jumlah }}</span></div>
+        @endforeach
+    </td>
     <td class="p-3">{{ $rental->tanggal_sewa->format('d/m/Y') }}</td>
     <td class="p-3">{{ $rental->tanggal_kembali->format('d/m/Y') }}</td>
     <td class="p-3">Rp{{ number_format($rental->total_harga, 0, ',', '.') }}</td>

@@ -7,7 +7,7 @@
 
     <a href="{{ route('my_rentals.create') }}"
        class="bg-purple-600 text-white px-4 py-2 rounded-lg">
-        + Pesan Kostum
+        + Pesan Kostum / Aksesoris
     </a>
 </div>
 
@@ -21,7 +21,7 @@
 
 <thead class="bg-purple-600 text-white">
 <tr>
-    <th class="p-3">Kostum</th>
+    <th class="p-3">Item</th>
     <th class="p-3">Tanggal Sewa</th>
     <th class="p-3">Tanggal Kembali</th>
     <th class="p-3">Total</th>
@@ -34,7 +34,11 @@
 @forelse($rentals as $rental)
 
 <tr class="border-b">
-    <td class="p-3">{{ $rental->costume->nama_kostum }}</td>
+    <td class="p-3">
+        @foreach($rental->items as $item)
+            <div>{{ $item->nama }} <span class="text-gray-500">×{{ $item->jumlah }}</span></div>
+        @endforeach
+    </td>
     <td class="p-3">{{ $rental->tanggal_sewa->format('d/m/Y') }}</td>
     <td class="p-3">{{ $rental->tanggal_kembali->format('d/m/Y') }}</td>
     <td class="p-3">Rp{{ number_format($rental->total_harga, 0, ',', '.') }}</td>
@@ -45,7 +49,7 @@
 
 <tr>
     <td colspan="5" class="p-6 text-center text-gray-500">
-        Belum ada pesanan. Pilih kostum lalu tekan "Pesan Kostum".
+        Belum ada pesanan. Tekan "Pesan Kostum / Aksesoris" untuk mulai.
     </td>
 </tr>
 

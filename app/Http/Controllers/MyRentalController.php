@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Accessories;
 use App\Models\Costume;
-use App\Models\RentalSchedule;
+use App\Services\RentalService;
 use Illuminate\Http\Request;
 
 class MyRentalController extends Controller
 {
+    public function __construct(private RentalService $service)
+    {
+    }
+
     private function customer()
     {
         $customer = auth()->user()->customer;
@@ -19,7 +24,7 @@ class MyRentalController extends Controller
     public function index()
     {
         $rentals = $this->customer()->rentalSchedules()
-            ->with('costume')->latest()->get();
+            ->with(['items.costume', 'items.accessory'])->latest()->get();
 
         return view('my_rentals.index', compact('rentals'));
     }
@@ -27,9 +32,11 @@ class MyRentalController extends Controller
     public function create()
     {
         $this->customer();
-        $costumes = Costume::where('stok', '>', 0)->orderBy('nama_kostum')->get();
 
-        return view('my_rentals.create', compact('costumes'));
+        return view('my_rentals.create', [
+            'costumes' => Costume::where('stok', '>', 0)->orderBy('nama_kostum')->get(),
+            'accessories' => Accessories::where('stok', '>', 0)->orderBy('nama_aksesoris')->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -37,26 +44,19 @@ class MyRentalController extends Controller
         $customer = $this->customer();
 
         $data = $request->validate([
-            'costume_id' => 'required|exists:costumes,id',
             'tanggal_sewa' => 'required|date|after_or_equal:today',
             'tanggal_kembali' => 'required|date|after:tanggal_sewa',
-        ]);
+        ] + RentalService::ATURAN_ITEM);
 
-        $costume = Costume::findOrFail($data['costume_id']);
+        [$kostum, $aksesoris] = RentalService::itemDariInput($data);
 
-        if ($costume->stok < 1) {
-            return back()->withInput()
-                ->withErrors(['costume_id' => 'Stok kostum ini sedang habis.']);
-        }
-
-        // Total dihitung di server, bukan dari input form
-        $customer->rentalSchedules()->create([
-            'costume_id' => $costume->id,
+        // Status awal selalu "menunggu"; stok langsung dikurangi (dipesan).
+        $this->service->buat([
+            'customer_id' => $customer->id,
             'tanggal_sewa' => $data['tanggal_sewa'],
             'tanggal_kembali' => $data['tanggal_kembali'],
-            'total_harga' => RentalSchedule::hitungTotal($costume, $data['tanggal_sewa'], $data['tanggal_kembali']),
             'status' => 'menunggu',
-        ]);
+        ], $kostum, $aksesoris);
 
         return redirect()->route('my_rentals.index')
             ->with('success', 'Pesanan terkirim. Menunggu persetujuan admin.');

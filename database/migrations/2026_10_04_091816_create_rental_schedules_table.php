@@ -11,10 +11,9 @@ return new class extends Migration
         Schema::create('rental_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('costume_id')->constrained()->cascadeOnDelete();
             $table->date('tanggal_sewa');
             $table->date('tanggal_kembali');
-            $table->decimal('total_harga', 12, 2);
+            $table->decimal('total_harga', 12, 2)->default(0);
             $table->string('status')->default('menunggu');
             $table->timestamps();
         });

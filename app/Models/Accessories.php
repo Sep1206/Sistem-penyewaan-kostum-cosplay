@@ -14,4 +14,9 @@ class Accessories extends Model
         'kondisi',
         'deskripsi',
     ];
+
+    public function rentalItems()
+    {
+        return $this->hasMany(RentalItem::class, 'accessory_id');
+    }
 }

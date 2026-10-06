@@ -16,8 +16,8 @@ class Costume extends Model
         'stok',
     ];
 
-    public function rentalSchedules()
+    public function rentalItems()
     {
-        return $this->hasMany(RentalSchedule::class);
+        return $this->hasMany(RentalItem::class);
     }
 }

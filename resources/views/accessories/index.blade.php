@@ -59,6 +59,15 @@
                 <button class="text-red-600" onclick="return confirm('Hapus data ini?')">Hapus</button>
             </form>
 
+        @elseif($accessory->stok > 0)
+
+            <a href="{{ route('my_rentals.create', ['accessory_id' => $accessory->id]) }}"
+               class="text-purple-700 font-semibold">Pesan</a>
+
+        @else
+
+            <span class="text-gray-400">Stok habis</span>
+
         @endif
 
     </td>

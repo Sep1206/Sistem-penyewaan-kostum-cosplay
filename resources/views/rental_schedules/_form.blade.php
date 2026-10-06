@@ -10,17 +10,6 @@
     @endforeach
 </select>
 
-<select name="costume_id" class="w-full border p-3 rounded" required>
-    <option value="">Pilih kostum</option>
-    @foreach($costumes as $costume)
-        <option value="{{ $costume->id }}"
-            @selected(old('costume_id', $rental?->costume_id) == $costume->id)>
-            {{ $costume->nama_kostum }} ({{ $costume->ukuran }}) -
-            Rp{{ number_format($costume->harga_sewa, 0, ',', '.') }}/hari - stok {{ $costume->stok }}
-        </option>
-    @endforeach
-</select>
-
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     <label class="block text-sm">Tanggal sewa
         <input type="date" name="tanggal_sewa" class="w-full border p-3 rounded mt-1" required
@@ -44,7 +33,10 @@
     </select>
 </label>
 
+@include('rental_schedules._items')
+
 <p class="text-sm text-gray-500">
-    Total harga dihitung otomatis: harga sewa × jumlah hari.
-    Stok kostum berkurang saat status "Disewa" dan kembali saat status berubah.
+    Total harga dihitung otomatis: harga sewa × jumlah × jumlah hari.
+    Stok berkurang selama status Menunggu, Disetujui, dan Disewa. Stok kembali saat status
+    Dikembalikan atau Ditolak, atau saat data dihapus.
 </p>
